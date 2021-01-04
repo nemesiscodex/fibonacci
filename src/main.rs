@@ -1,27 +1,46 @@
-use actix_web::{App, HttpServer, get, web::{self, Json}};
+use actix_web::{App, HttpServer, client::Client, get, web::{self, Json}, Result};
 use log::debug;
-use serde::Serialize;
+use serde::{Serialize, Deserialize};
 
-#[derive(Serialize)]
+#[derive(Serialize, Deserialize)]
 struct Fib {
     fib: u32
 }
 
-fn calculate_fib(num: u32) -> u32 {
+impl std::ops::Add for Fib {
+    type Output = Self;
+
+    fn add(self, rhs: Self) -> Self::Output {
+        Fib { fib: self.fib + rhs.fib }
+    }
+}
+
+async fn call_fib(num: u32) -> Result<Fib> {
+    let mut result = Client::new()
+        .get(format!("http://localhost:3000/fib/{}", num))
+        .send()
+        .await?;
+
+    let fib_result: Fib = result.json().await?;
+
+    Ok(fib_result)
+}
+ 
+async fn calculate_fib(num: u32) -> Result<Fib> {
     debug!("Calculating fib {}", num);
     if num <= 1 {
-        1
+        Ok(Fib { fib: 1 })
     } else {
-        calculate_fib(num-1) + calculate_fib(num-2)
+        Ok(call_fib(num-1).await? + call_fib(num-2).await?)
     }
 }
 
 #[get("/fib/{num}")]
-async fn fib(web::Path(num): web::Path<u32>) -> Json<Fib> {
+async fn fib(web::Path(num): web::Path<u32>) -> Result<Json<Fib>> {
 
-    let body = Fib { fib: calculate_fib(num) };
+    let body = calculate_fib(num).await?;
 
-    web::Json(body)
+    Ok(web::Json(body))
 
 }
 
