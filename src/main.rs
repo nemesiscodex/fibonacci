@@ -1,6 +1,8 @@
+mod config;
+
 use actix_web::{App, HttpServer, client::Client, get, web::{self, Json}, Result};
-use log::debug;
 use serde::{Serialize, Deserialize};
+use tracing::{debug, instrument};
 
 #[derive(Serialize, Deserialize)]
 struct Fib {
@@ -15,6 +17,7 @@ impl std::ops::Add for Fib {
     }
 }
 
+#[instrument]
 async fn call_fib(num: u32) -> Result<Fib> {
     let mut result = Client::new()
         .get(format!("http://localhost:3000/fib/{}", num))
@@ -26,6 +29,7 @@ async fn call_fib(num: u32) -> Result<Fib> {
     Ok(fib_result)
 }
  
+#[instrument]
 async fn calculate_fib(num: u32) -> Result<Fib> {
     debug!("Calculating fib {}", num);
     if num <= 1 {
@@ -36,6 +40,7 @@ async fn calculate_fib(num: u32) -> Result<Fib> {
 }
 
 #[get("/fib/{num}")]
+#[instrument]
 async fn fib(web::Path(num): web::Path<u32>) -> Result<Json<Fib>> {
 
     let body = calculate_fib(num).await?;
@@ -47,7 +52,7 @@ async fn fib(web::Path(num): web::Path<u32>) -> Result<Json<Fib>> {
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
 
-    env_logger::init();
+    config::configure_tracing();
 
     HttpServer::new(|| {
         App::new()
