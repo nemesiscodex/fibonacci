@@ -3,6 +3,7 @@ mod config;
 use actix_web::{App, HttpServer, client::Client, get, web::{self, Json}, Result};
 use serde::{Serialize, Deserialize};
 use tracing::{debug, instrument};
+use tracing_actix_web::TracingLogger;
 
 #[derive(Serialize, Deserialize)]
 struct Fib {
@@ -56,6 +57,7 @@ async fn main() -> std::io::Result<()> {
 
     HttpServer::new(|| {
         App::new()
+            .wrap(TracingLogger)
             .service(fib)
     })
     .bind("0.0.0.0:3000")?
