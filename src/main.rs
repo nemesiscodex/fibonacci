@@ -1,4 +1,5 @@
 use actix_web::{App, HttpServer, get, web::{self, Json}};
+use log::debug;
 use serde::Serialize;
 
 #[derive(Serialize)]
@@ -7,6 +8,7 @@ struct Fib {
 }
 
 fn calculate_fib(num: u32) -> u32 {
+    debug!("Calculating fib {}", num);
     if num <= 1 {
         1
     } else {
@@ -25,6 +27,8 @@ async fn fib(web::Path(num): web::Path<u32>) -> Json<Fib> {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+
+    env_logger::init();
 
     HttpServer::new(|| {
         App::new()
