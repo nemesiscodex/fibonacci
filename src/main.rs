@@ -1,9 +1,10 @@
 mod config;
 
-use actix_web::{App, HttpServer, client::Client, get, web::{self, Json}, Result};
+use actix_web::{App, HttpServer, Result, client::Client, get, web::{self, Json}};
 use serde::{Serialize, Deserialize};
-use tracing::{debug, instrument};
-use tracing_actix_web::TracingLogger;
+use tracing::{error, info, instrument};
+use actix_web_opentelemetry::{ClientExt, RequestTracing};
+use uuid::Uuid;
 
 #[derive(Serialize, Deserialize)]
 struct Fib {
@@ -22,6 +23,7 @@ impl std::ops::Add for Fib {
 async fn call_fib(num: u32) -> Result<Fib> {
     let mut result = Client::new()
         .get(format!("http://localhost:3000/fib/{}", num))
+        .trace_request()
         .send()
         .await?;
 
@@ -32,8 +34,11 @@ async fn call_fib(num: u32) -> Result<Fib> {
  
 #[instrument]
 async fn calculate_fib(num: u32) -> Result<Fib> {
-    debug!("Calculating fib {}", num);
-    if num <= 1 {
+    info!("Calculating fib {}", num);
+    if num == 4 {
+        error!("Cannot calculate fibonacci 4");
+        Err(actix_web::error::ErrorRequestTimeout(std::io::Error::new(std::io::ErrorKind::Other, "oh no!")))
+    } else if num <= 1 {
         Ok(Fib { fib: 1 })
     } else {
         Ok(call_fib(num-1).await? + call_fib(num-2).await?)
@@ -41,7 +46,7 @@ async fn calculate_fib(num: u32) -> Result<Fib> {
 }
 
 #[get("/fib/{num}")]
-#[instrument]
+#[instrument(fields(request_id=?Uuid::new_v4()))]
 async fn fib(web::Path(num): web::Path<u32>) -> Result<Json<Fib>> {
 
     let body = calculate_fib(num).await?;
@@ -53,11 +58,11 @@ async fn fib(web::Path(num): web::Path<u32>) -> Result<Json<Fib>> {
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
 
-    config::configure_tracing();
+    let _uninstall = config::configure_tracing();
 
     HttpServer::new(|| {
         App::new()
-            .wrap(TracingLogger)
+            .wrap(RequestTracing::new())
             .service(fib)
     })
     .bind("0.0.0.0:3000")?
