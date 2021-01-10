@@ -4,6 +4,7 @@ use tracing::{error, info, instrument};
 use uuid::Uuid;
 use actix_web::{Result, client::Client, get, web::{self, Json}};
 use actix_web_opentelemetry::ClientExt;
+use futures::try_join;
 
 
 #[derive(Serialize, Deserialize)]
@@ -41,7 +42,10 @@ async fn calculate_fib(num: u32) -> Result<Fib> {
     } else if num <= 1 {
         Ok(Fib { fib: 1 })
     } else {
-        Ok(call_fib(num-1).await? + call_fib(num-2).await?)
+        let f1 = call_fib(num-1);
+        let f2 = call_fib(num-2);
+        let (fib1, fib2) = try_join!(f1, f2)?;
+        Ok(fib1 + fib2)
     }
 }
 

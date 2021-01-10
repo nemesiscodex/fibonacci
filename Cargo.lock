@@ -263,9 +263,9 @@ dependencies = [
 
 [[package]]
 name = "actix-web-opentelemetry"
-version = "0.8.0"
+version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f7c2af09ed5912db416fe4556472c812f5d6b7c8a7785a7929a28ca7e4648b26"
+checksum = "d10b9d36fd431016fb3ad4be804c7c35f685661a327bdc1a15aaff8eff8bcc4b"
 dependencies = [
  "actix-http",
  "actix-web",
@@ -575,6 +575,7 @@ version = "0.1.0"
 dependencies = [
  "actix-web",
  "actix-web-opentelemetry",
+ "futures",
  "opentelemetry",
  "opentelemetry-jaeger",
  "serde",
@@ -921,6 +922,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "dd25036021b0de88a0aff6b850051563c6516d0bf53f8638938edbb9de732736"
 
 [[package]]
+name = "js-sys"
+version = "0.3.46"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cf3d7383929f7c9c7c2d0fa596f325832df98c3704f2c60553080f7127a58175"
+dependencies = [
+ "wasm-bindgen",
+]
+
+[[package]]
 name = "kernel32-sys"
 version = "0.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1139,14 +1149,15 @@ checksum = "624a8340c38c1b80fd549087862da4ba43e08858af025b236e509b6649fc13d5"
 
 [[package]]
 name = "opentelemetry"
-version = "0.10.0"
+version = "0.11.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e260f0ef133e1043b95143f83cfc8f6be023cf4b46a526da0212039b45392679"
+checksum = "d3434e2a9d2aec539d91f4251bf9047cd53b4d3f386f9d336f4c8076c72a5256"
 dependencies = [
  "async-trait",
  "dashmap",
  "fnv",
  "futures",
+ "js-sys",
  "lazy_static",
  "percent-encoding",
  "pin-project 0.4.27",
@@ -1158,20 +1169,22 @@ dependencies = [
 
 [[package]]
 name = "opentelemetry-jaeger"
-version = "0.9.0"
+version = "0.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d1434625fc67118fa79088f260051cf9149ca0d8737aefb7e4b5c6a861c765ca"
+checksum = "b4c604a73595f605a852c431ef9c6bbacc7b911f094900905fd2f684b6fc44b4"
 dependencies = [
  "async-trait",
+ "lazy_static",
  "opentelemetry",
+ "thiserror",
  "thrift",
 ]
 
 [[package]]
 name = "opentelemetry-semantic-conventions"
-version = "0.2.0"
+version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3251f8e16776c613633602eb9d03753d128901bcaffe81b99b211204c4108798"
+checksum = "3839dd2c931dc1aabcf964623ad74478fa97b3a88ad073d9e107aea36520c21d"
 dependencies = [
  "opentelemetry",
 ]
@@ -1844,9 +1857,9 @@ dependencies = [
 
 [[package]]
 name = "tracing-opentelemetry"
-version = "0.9.0"
+version = "0.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "08457d22f95dc05ff929afcdc3d57f3a2437f9377765bb6e20ffeb67d72b1719"
+checksum = "b1706e1f42970e09aa0635deb4f4607e8704a4390427d5f0062bf59240338bcc"
 dependencies = [
  "opentelemetry",
  "tracing",
