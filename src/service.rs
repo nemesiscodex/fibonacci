@@ -36,10 +36,7 @@ async fn call_fib(num: u32) -> Result<Fib> {
 #[instrument]
 async fn calculate_fib(num: u32) -> Result<Fib> {
     info!("Calculating fib {}", num);
-    if num == 4 {
-        error!("Cannot calculate fibonacci 4");
-        Err(actix_web::error::ErrorRequestTimeout(std::io::Error::new(std::io::ErrorKind::Other, "oh no!")))
-    } else if num <= 1 {
+    if num <= 1 {
         Ok(Fib { fib: 1 })
     } else {
         let f1 = call_fib(num-1);

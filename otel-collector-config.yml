@@ -1,0 +1,35 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: "0.0.0.0:4317"
+  zipkin:
+
+exporters:
+  jaeger_thrift:
+    url: "http://jaeger:14268/api/traces"
+  logging:
+  prometheus:
+    endpoint: "0.0.0.0:8889"
+  zipkin:
+    endpoint: "http://zipkin:9411/api/v2/spans"
+
+processors:
+  batch:
+
+extensions:
+  health_check:
+  pprof:
+  zpages:
+
+service:
+  extensions: [pprof, zpages, health_check]
+  pipelines:
+    traces:
+      receivers: [otlp, zipkin]
+      exporters: [zipkin, jaeger_thrift, logging]
+      processors: [batch]
+    metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [logging, prometheus]  

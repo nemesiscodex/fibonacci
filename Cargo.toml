@@ -8,10 +8,11 @@ edition = "2018"
 
 [dependencies]
 actix-web = "3.3.2"
-actix-web-opentelemetry = "0.9.0"
-futures = "0.3.8"
-opentelemetry = "0.11.2"
-opentelemetry-jaeger = "0.10"
+actix-web-opentelemetry = { version = "0.9.0", features = ["metrics"] }
+futures = "0.3.9"
+opentelemetry = { version = "0.11.2", features = ["trace", "metrics"] }
+opentelemetry-otlp = "0.4.0"
+opentelemetry-prometheus = "0.4.0"
 serde = "1.0.118"
 tracing = "0.1.22"
 tracing-bunyan-formatter = "0.1.7"
