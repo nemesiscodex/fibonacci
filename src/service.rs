@@ -1,6 +1,6 @@
 
 use serde::{Serialize, Deserialize};
-use tracing::{error, info, instrument};
+use tracing::{info, instrument};
 use uuid::Uuid;
 use actix_web::{Result, client::Client, get, web::{self, Json}};
 use actix_web_opentelemetry::ClientExt;

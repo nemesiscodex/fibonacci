@@ -618,6 +618,7 @@ dependencies = [
  "tracing",
  "tracing-bunyan-formatter",
  "tracing-futures",
+ "tracing-gelf",
  "tracing-log",
  "tracing-opentelemetry",
  "tracing-subscriber",
@@ -2297,6 +2298,23 @@ checksum = "ab7bb6f14721aa00656086e9335d363c5c8747bae02ebe32ea2c7dece5689b4c"
 dependencies = [
  "pin-project 0.4.27",
  "tracing",
+]
+
+[[package]]
+name = "tracing-gelf"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ae43a00e9373df3fd787d483ae6344bedfc390432b81adeb5580d3ee17c1bec2"
+dependencies = [
+ "bytes",
+ "futures-channel",
+ "futures-util",
+ "hostname",
+ "serde_json",
+ "tokio",
+ "tokio-util",
+ "tracing-core",
+ "tracing-subscriber",
 ]
 
 [[package]]
